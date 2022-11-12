@@ -1,0 +1,7 @@
+name = "d1-chat"
+compatibility_date = "2022-11-12"
+
+[[ d1_databases ]]
+binding = "DB" # i.e. available in your Worker on env.DB
+database_name = "chatdb"
+database_id = "5029026c-4fbc-4fee-b4bb-d62b445a7e9b"
