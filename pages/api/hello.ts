@@ -1,20 +1,34 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest } from "next/server";
 
-type Data = {
-  name: string;
+export interface ExecutionContext {
+  env: {
+    DB: D1Database;
+  };
+}
+
+export const config = {
+  runtime: "experimental-edge",
 };
 
-export const config = { runtime: "experimental-edge" };
+// eslint-disable-next-line import/no-anonymous-default-export
+export default async function (_req: NextRequest, ctx: ExecutionContext) {
+  try {
+    const { results } = await ctx.env.DB.prepare("SELECT * FROM chat ").all();
 
-export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>
-) {
-  return new Response(JSON.stringify({ name: "John Doe" }), {
-    status: 200,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+    return new Response(JSON.stringify(results), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  } catch (e: any) {
+    return new Response(JSON.stringify({ err: e.toString(), msg: e.message }), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
 }
